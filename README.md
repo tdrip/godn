@@ -1,2 +1,2 @@
-# godn
-A Go version of Distinguished Name 
+# A Tree Repo
+A Go version of Tree
