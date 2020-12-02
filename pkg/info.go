@@ -35,6 +35,35 @@ type Info struct {
 	Seperator byte
 }
 
+func NewInfoCustomTop(Top string, Path string) *Info {
+	return NewInfoCustom(Top, DefaultSeperator, strings.TrimSpace(Path))
+}
+
+func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
+
+	info := MakeDefaultInfo()
+
+	// store the orginal value passed in
+	info.OriginalValue = Path
+
+	// set the seperator
+	info.Seperator = Seperator
+
+	// set the top of the path
+	info = info.parseTop(Top)
+
+	// Parse the Path
+	info.ParsedPath = info.parsePath(Path, info.Seperator, info.Top.String())
+
+	//build the name
+	info.Name = info.buildName()
+
+	// Mark as Parse
+	info.Parsed = true
+
+	return info
+}
+
 func NewInfo(path string) *Info {
 	info := MakeDefaultInfo()
 
@@ -51,7 +80,7 @@ func MakeDefaultInfo() *Info {
 	info := new(Info)
 
 	// set an empty root
-	info = info.ParseTop("")
+	info = info.parseTop("")
 
 	// set the defult seperator
 	info.Seperator = DefaultSeperator
@@ -62,7 +91,157 @@ func MakeDefaultInfo() *Info {
 	return info
 }
 
-func (pathi *Info) ParseTop(root string) *Info {
+func (pathi *Info) buildName() string {
+
+	if pathi.ParsedPath != "" {
+
+		r := []rune(pathi.ParsedPath)
+
+		pathi.Name = ""
+		pathi.Parent = nil
+
+		//ParentPath := ""
+		PTop := pathi.Top.String()
+		//fmt.Println("Name: ", pathi.Name)
+		//fmt.Println("Parent: ", pathi.Parent)
+		foundfirstseperator := false
+
+		// fix later
+		ppath := strings.Replace(pathi.Parent.String(), string(pathi.Seperator), "", -1)
+		ptop := strings.Replace(PTop, string(pathi.Seperator), "", -1)
+
+		//fmt.Println("Parent Top: ", ptop)
+		//fmt.Println("Parent Path: ", ppath)
+
+		if strings.ToLower(ppath) == strings.ToLower(ptop) {
+			pathi.Name = ppath
+			pathi.Parent = nil
+		} else {
+			// walk in reverse over the Path
+			for i := len(r) - 1; i >= 0; i-- {
+
+				if foundfirstseperator {
+
+					// the first
+					pathi.Name = string(r[i+2 : len(r)])
+					pathi.Parent = NewInfoCustom(ptop, pathi.Seperator, string(r[0:i+1]))
+
+					//fmt.Println("i : %d ", i);
+					//fmt.Println("len : %d ",len(r));
+					break
+				}
+
+				// we found
+				if r[i] == rune(pathi.Seperator) {
+					foundfirstseperator = true
+				}
+			}
+		}
+		//fmt.Println("Name: ", pathi.Name)
+		//fmt.Println("Parent: ", pathi.Parent)
+	}
+
+	return ""
+}
+
+// clean the path
+func (pathi *Info) parsePath(Path string, Seperator byte, Top string) string {
+
+	//fmt.Println("Top: ", Top)
+	//fmt.Println("Path: ", Path)
+
+	if Path != "" {
+
+		// clear up any white spaces
+		Path = strings.TrimSpace(Path)
+
+		Path = strings.Replace(Path, string(Seperator)+string(Seperator), string(Seperator), -1)
+
+		// it's not null, has one character and that character is a seperator
+		// \\ or //
+		if Path != "" && len(Path) == 1 && Path[0] == Seperator {
+			Path = Top
+		}
+
+		// chop off the end slash if it is provided
+		if strings.HasSuffix(Path, string(Seperator)) {
+			Path = Path[:(len(Path) - 1)]
+			//fmt.Println("Path  = Path[:(len(Path) - 1)]: ", Path)
+		}
+
+		// make sure that the start has a slash
+		if Path[0] != Seperator {
+			Path = string(Seperator) + Path
+			//fmt.Println("Path = string(Seperator) + Path: ", Path)
+		}
+
+		// Is the Path rooted?
+		if !strings.HasPrefix(strings.ToLower(Path), strings.ToLower(Top)) {
+			Path = pathi.addTop(Path, Seperator, Top)
+		}
+
+		// fix double slashes being provided
+		// clean up if we were passed a Path with extra slashes (JSON)
+		return Path
+	} else {
+		Path = pathi.addTop(Path, Seperator, Top)
+	}
+
+	return Path
+}
+
+func (pathi *Info) addTop(Path string, Seperator byte, Top string) string {
+
+	pdn := strings.Replace(Path, string(Seperator), "", -1)
+	ptop := strings.Replace(Top, string(Seperator), "", -1)
+
+	//fmt.Println("Top: ", ptop)
+	//fmt.Println("Path: ", pdn)
+
+	if strings.ToLower(pdn) == strings.ToLower(ptop) {
+		return Path
+	} else {
+
+		// two checks on the root
+		tophasfirstslash := (Top[0] == Seperator)
+		tophasendslash := (Top[len(Top)-1] == Seperator)
+
+		// split the Top
+		r := []rune(Top)
+
+		// we have two seperators
+		// |foo|, \loo\ etc
+		if tophasendslash && tophasfirstslash {
+			Path = string(r[0:len(Top)-1]) + Path
+			//fmt.Println("Path =  string(r[0:len(Root) - 1]) + Path: ", Path)
+		} else {
+
+			if tophasfirstslash && !tophasendslash {
+				// we have no end seperators
+				// \foo, \loo etc
+				// has seperator
+
+				Path = string(Seperator) + string(r[0:len(Top)-1]) + Path
+				//fmt.Println("Path =  string(Seperator) + string(r[0:len(Top) - 1]) + Path: ", Path)
+			} else if !tophasfirstslash && tophasendslash {
+
+				// we have no start seperators
+				// \foo, \loo etc
+				// has seperator
+				Path = string(r[0:len(Top)-1]) + Path
+				//fmt.Println("Path =  string(r[0:len(Top) - 1]) + Path: ", Path)
+			} else {
+				Path = string(Seperator) + Top + Path
+				//fmt.Println("Path =  string(Seperator) + Top + Path: ", Path)
+			}
+		}
+
+		return Path
+	}
+}
+
+///
+func (pathi *Info) parseTop(root string) *Info {
 
 	//fmt.Println("ParseTop: ", root)
 	Root := ""
