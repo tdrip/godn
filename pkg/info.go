@@ -122,8 +122,8 @@ func (pathi *Info) buildName() *Info {
 					pathi.Name = string(r[i+2 : len(r)])
 					pathi.Parent = NewInfoCustom(ptop, pathi.Seperator, string(r[0:i+1]))
 
-					fmt.Println("i : %d ", i)
-					fmt.Println("len : %d ", len(r))
+					fmt.Printf("i : %d \n", i)
+					fmt.Printf("len : %d \n", len(r))
 					break
 				}
 
@@ -274,14 +274,15 @@ func (pathi *Info) parseTop(top string) string {
 func (pathi *Info) IsTop() bool {
 	if pathi == nil {
 		return false
-	} else {
-		ltop := strings.ToLower(pathi.Top)
-		lpath := strings.ToLower(pathi.String())
-		if len(lpath) == 1 {
-			return lpath[0] == pathi.Seperator
-		}
-		return lpath == string(pathi.Seperator)+ltop+string(pathi.Seperator) || lpath == ltop+string(pathi.Seperator) || lpath == string(pathi.Seperator)+ltop
 	}
+
+	ltop := strings.ToLower(pathi.Top)
+	lpath := strings.ToLower(pathi.String())
+	if len(lpath) == 1 {
+		return lpath[0] == pathi.Seperator
+	}
+	return lpath == string(pathi.Seperator)+ltop+string(pathi.Seperator) || lpath == ltop+string(pathi.Seperator) || lpath == string(pathi.Seperator)+ltop
+
 }
 
 func (pathi *Info) IsValid() (bool, string) {
