@@ -149,41 +149,46 @@ func (pathi *Info) parsePath(Path string, Seperator byte, Top string) *Info {
 	if len(Path) > 0 {
 
 		// clear up any white spaces
-		Path = strings.TrimSpace(Path)
+		path := strings.TrimSpace(Path)
+		fmt.Printf("Path = Trimmed: %s \n", path)
 
 		// remove any double seperators with single seperators
 		// for example \\ or //
-		Path = strings.Replace(Path, string(Seperator)+string(Seperator), string(Seperator), -1)
+		path = strings.Replace(path, string(Seperator)+string(Seperator), string(Seperator), -1)
+		fmt.Printf("Path = Replace %c%c: %s \n", Seperator, Seperator, path)
 
 		// it's not null, has one character and that character is a seperator
 		// for example: \ or /
-		if len(Path) == 1 && Path[0] == Seperator {
-			Path = Top
+		if len(path) == 1 && path[0] == Seperator {
+			path = Top
 		}
 
 		// chop off the end seperator if it is provided
-		if strings.HasSuffix(Path, string(Seperator)) {
-			Path = Path[:(len(Path) - 1)]
-			fmt.Printf("Path  = Path[:(len(Path) - 1)]: %s \n", Path)
+		if len(path) > 1 && strings.HasSuffix(path, string(Seperator)) {
+			path = path[:(len(path) - 1)]
+			fmt.Printf("Path = Path[:(len(Path) - 1)]: %s \n", path)
 		}
 
 		// make sure that the start has a slash
-		if len(Path) > 0 && Path[0] != Seperator {
-			Path = string(Seperator) + Path
-			fmt.Printf("Path = string(Seperator) + Path: %s \n", Path)
+		if len(path) > 0 && path[0] != Seperator {
+			path = string(Seperator) + path
+			fmt.Printf("Path = string(Seperator) + Path: %s \n", path)
 		}
 
 		// Is the Path toped?
-		if !strings.HasPrefix(strings.ToLower(Path), strings.ToLower(Top)) {
-			Path = pathi.addTop(Path, Seperator, Top)
+		if !strings.HasPrefix(strings.ToLower(path), strings.ToLower(Top)) {
+			path = pathi.addTop(path, Seperator, Top)
 		}
 
 		// fix double slashes being provided
 		// clean up if we were passed a Path with extra slashes (JSON)
-		//return Path
+		pathi.ParsedPath = pathi.addTop(path, Seperator, Top)
+	} else {
+		pathi.ParsedPath = pathi.addTop(Path, Seperator, Top)
 	}
 
-	pathi.ParsedPath = pathi.addTop(Path, Seperator, Top)
+	fmt.Printf("pathi.ParsedPath: %s \n", pathi.ParsedPath)
+
 	return pathi
 }
 
