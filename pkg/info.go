@@ -44,7 +44,7 @@ func NewInfoCustomTop(Top string, Path string) *Info {
 }
 
 func NewInfoCustomSeperator(Seperator byte, Path string) *Info {
-	return NewInfoCustom(DefaultTop, Seperator, strings.TrimSpace(Path))
+	return NewInfoCustom(string(Seperator)+"", Seperator, strings.TrimSpace(Path))
 }
 
 func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
