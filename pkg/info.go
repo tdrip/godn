@@ -97,13 +97,13 @@ func (pathi *Info) buildName() *Info {
 		pathi.Name = ""
 		pathi.Parent = nil
 
-		PTop := pathi.Top
 		//fmt.Println("Name: ", pathi.Name)
 		//fmt.Println("Parent: ", pathi.Parent)
+
 		foundfirstseperator := false
 
-		ppath := strings.Replace(pathi.Parent.String(), string(pathi.Seperator), "", -1)
-		ptop := strings.Replace(PTop, string(pathi.Seperator), "", -1)
+		ppath := strings.Replace(pathi.ParsedPath, string(pathi.Seperator), "", -1)
+		ptop := strings.Replace(pathi.Top, string(pathi.Seperator), "", -1)
 
 		//fmt.Println("Parent Top: ", ptop)
 		//fmt.Println("Parent Path: ", ppath)
@@ -279,8 +279,14 @@ func (pathi *Info) IsTop() bool {
 		return false
 	}
 
+	parsed, path := pathi.IsParsed()
+
+	if parsed && pathi.Parent == nil {
+		return true
+	}
+
 	ltop := strings.ToLower(pathi.Top)
-	lpath := strings.ToLower(pathi.String())
+	lpath := strings.ToLower(path)
 	//fmt.Printf("lpath: %s \n", lpath)
 	//fmt.Printf("ltop: %s \n", ltop)
 	if len(lpath) == 1 {
