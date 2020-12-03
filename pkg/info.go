@@ -58,7 +58,7 @@ func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
 	info.Seperator = Seperator
 
 	// set the top of the path
-	info = info.parseTop(Top)
+	info.Top = info.parseTop(Top)
 
 	// Parse the Path
 	info.ParsedPath = info.parsePath(Path, info.Seperator, info.Top)
@@ -78,7 +78,7 @@ func MakeDefaultInfo() *Info {
 	info := new(Info)
 
 	// set an empty top
-	info = info.parseTop(DefaultTop)
+	info.Top = info.parseTop(DefaultTop)
 
 	// set the defult seperator
 	info.Seperator = DefaultSeperator
@@ -153,15 +153,17 @@ func (pathi *Info) parsePath(Path string, Seperator byte, Top string) string {
 		// clear up any white spaces
 		Path = strings.TrimSpace(Path)
 
+		// remove any double seperators with single seperators
+		// for example \\ or //
 		Path = strings.Replace(Path, string(Seperator)+string(Seperator), string(Seperator), -1)
 
 		// it's not null, has one character and that character is a seperator
-		// \\ or //
-		if len(Path) > 0 && len(Path) == 1 && Path[0] == Seperator {
+		// for example: \ or /
+		if len(Path) == 1 && Path[0] == Seperator {
 			Path = Top
 		}
 
-		// chop off the end slash if it is provided
+		// chop off the end seperator if it is provided
 		if strings.HasSuffix(Path, string(Seperator)) {
 			Path = Path[:(len(Path) - 1)]
 			//fmt.Println("Path  = Path[:(len(Path) - 1)]: ", Path)
@@ -239,7 +241,7 @@ func (pathi *Info) addTop(Path string, Seperator byte, Top string) string {
 }
 
 ///
-func (pathi *Info) parseTop(top string) *Info {
+func (pathi *Info) parseTop(top string) string {
 
 	//fmt.Println("ParseTop: ", top)
 	Top := ""
@@ -266,15 +268,9 @@ func (pathi *Info) parseTop(top string) *Info {
 		}
 	}
 
-	if Top == "" {
-
-	} else {
-
-	}
 	//fmt.Println("pathi.Top: ", pathi.Top)
 
-	return pathi
-
+	return Top
 }
 
 func (pathi *Info) IsTop() bool {
