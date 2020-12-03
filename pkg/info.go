@@ -14,7 +14,7 @@ const DefaultTop = string(DefaultSeperator) + ""
 type Info struct {
 
 	// This is the Top Item in the Tree
-	Top *Info
+	Top string
 
 	// The Original Value Passed in
 	OriginalValue string
@@ -61,7 +61,7 @@ func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
 	info = info.parseTop(Top)
 
 	// Parse the Path
-	info.ParsedPath = info.parsePath(Path, info.Seperator, info.Top.String())
+	info.ParsedPath = info.parsePath(Path, info.Seperator, info.Top)
 
 	//build the name
 	info.Name = info.buildName()
@@ -77,7 +77,7 @@ func MakeDefaultInfo() *Info {
 	// build object
 	info := new(Info)
 
-	// set an empty root
+	// set an empty top
 	info = info.parseTop(DefaultTop)
 
 	// set the defult seperator
@@ -91,7 +91,7 @@ func MakeDefaultInfo() *Info {
 
 func (pathi *Info) buildName() string {
 
-	if pathi.ParsedPath != "" {
+	if len(pathi.ParsedPath) > 0 {
 
 		r := []rune(pathi.ParsedPath)
 
@@ -99,7 +99,7 @@ func (pathi *Info) buildName() string {
 		pathi.Parent = nil
 
 		//ParentPath := ""
-		PTop := pathi.Top.String()
+		PTop := pathi.Top
 		//fmt.Println("Name: ", pathi.Name)
 		//fmt.Println("Parent: ", pathi.Parent)
 		foundfirstseperator := false
@@ -148,7 +148,7 @@ func (pathi *Info) parsePath(Path string, Seperator byte, Top string) string {
 	//fmt.Println("Top: ", Top)
 	//fmt.Println("Path: ", Path)
 
-	if Path != "" {
+	if len(Path) > 0 {
 
 		// clear up any white spaces
 		Path = strings.TrimSpace(Path)
@@ -157,7 +157,7 @@ func (pathi *Info) parsePath(Path string, Seperator byte, Top string) string {
 
 		// it's not null, has one character and that character is a seperator
 		// \\ or //
-		if Path != "" && len(Path) == 1 && Path[0] == Seperator {
+		if len(Path) > 0 && len(Path) == 1 && Path[0] == Seperator {
 			Path = Top
 		}
 
@@ -168,12 +168,12 @@ func (pathi *Info) parsePath(Path string, Seperator byte, Top string) string {
 		}
 
 		// make sure that the start has a slash
-		if Path[0] != Seperator {
+		if len(Path) > 0 && Path[0] != Seperator {
 			Path = string(Seperator) + Path
 			//fmt.Println("Path = string(Seperator) + Path: ", Path)
 		}
 
-		// Is the Path rooted?
+		// Is the Path toped?
 		if !strings.HasPrefix(strings.ToLower(Path), strings.ToLower(Top)) {
 			Path = pathi.addTop(Path, Seperator, Top)
 		}
@@ -200,7 +200,7 @@ func (pathi *Info) addTop(Path string, Seperator byte, Top string) string {
 		return Path
 	} else {
 
-		// two checks on the root
+		// two checks on the top
 		tophasfirstslash := (Top[0] == Seperator)
 		tophasendslash := (Top[len(Top)-1] == Seperator)
 
@@ -239,39 +239,39 @@ func (pathi *Info) addTop(Path string, Seperator byte, Top string) string {
 }
 
 ///
-func (pathi *Info) parseTop(root string) *Info {
+func (pathi *Info) parseTop(top string) *Info {
 
-	//fmt.Println("ParseTop: ", root)
-	Root := ""
-	if root == "" {
+	//fmt.Println("ParseTop: ", top)
+	Top := ""
+	if len(top) == 0 {
 		// Default
-		Root = string(pathi.Seperator)
+		Top = string(pathi.Seperator)
 	} else {
 
-		if root[0] != pathi.Seperator && root[len(root)-1] != pathi.Seperator {
-			Root = string(pathi.Seperator) + root + string(pathi.Seperator)
-			//fmt.Println("pathi.Root = string(pathi.Seperator) + root + string(pathi.Seperator): ", pathi.Root)
+		if top[0] != pathi.Seperator && top[len(top)-1] != pathi.Seperator {
+			Top = string(pathi.Seperator) + top + string(pathi.Seperator)
+			//fmt.Println("pathi.Root = string(pathi.Seperator) + top + string(pathi.Seperator): ", pathi.Root)
 		} else {
 
-			if root[0] == pathi.Seperator && root[len(root)-1] != pathi.Seperator {
-				Root = root + string(pathi.Seperator)
-				//fmt.Println("root + string(pathi.Seperator): ", pathi.Root)
-			} else if root[0] != pathi.Seperator && root[len(root)-1] == pathi.Seperator {
-				Root = string(pathi.Seperator) + root
-				//fmt.Println("pathi.Root = string(pathi.Seperator) + root: ", pathi.Root)
+			if top[0] == pathi.Seperator && top[len(top)-1] != pathi.Seperator {
+				Top = top + string(pathi.Seperator)
+				//fmt.Println("top + string(pathi.Seperator): ", pathi.Root)
+			} else if top[0] != pathi.Seperator && top[len(top)-1] == pathi.Seperator {
+				Top = string(pathi.Seperator) + top
+				//fmt.Println("pathi.Root = string(pathi.Seperator) + top: ", pathi.Root)
 			} else {
-				Root = root
-				//fmt.Println("pathi.Root = root: ", pathi.Root)
+				Top = top
+				//fmt.Println("pathi.Root = top: ", pathi.Root)
 			}
 		}
 	}
 
-	if Root == "" {
+	if Top == "" {
 
 	} else {
 
 	}
-	//fmt.Println("pathi.Root: ", pathi.Root)
+	//fmt.Println("pathi.Top: ", pathi.Top)
 
 	return pathi
 
@@ -281,12 +281,12 @@ func (pathi *Info) IsTop() bool {
 	if pathi == nil {
 		return false
 	} else {
-		lroot := strings.ToLower(pathi.Top.String())
+		ltop := strings.ToLower(pathi.Top)
 		lpath := strings.ToLower(pathi.String())
 		if len(lpath) == 1 {
 			return lpath[0] == pathi.Seperator
 		}
-		return lpath == string(pathi.Seperator)+lroot+string(pathi.Seperator) || lpath == lroot+string(pathi.Seperator) || lpath == string(pathi.Seperator)+lroot
+		return lpath == string(pathi.Seperator)+ltop+string(pathi.Seperator) || lpath == ltop+string(pathi.Seperator) || lpath == string(pathi.Seperator)+ltop
 	}
 }
 
