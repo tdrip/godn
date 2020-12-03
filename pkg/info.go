@@ -35,8 +35,16 @@ type Info struct {
 	Seperator byte
 }
 
+func NewInfo(Path string) *Info {
+	return NewInfoCustom(DefaultTop, DefaultSeperator, strings.TrimSpace(Path))
+}
+
 func NewInfoCustomTop(Top string, Path string) *Info {
 	return NewInfoCustom(Top, DefaultSeperator, strings.TrimSpace(Path))
+}
+
+func NewInfoCustomSeperator(Seperator byte, Path string) *Info {
+	return NewInfoCustom(DefaultTop, Seperator, strings.TrimSpace(Path))
 }
 
 func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
@@ -64,23 +72,13 @@ func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
 	return info
 }
 
-func NewInfo(path string) *Info {
-	info := MakeDefaultInfo()
-
-	info.OriginalValue = path
-
-	// mark as unparsed
-	info.Parsed = false
-	return info
-}
-
 //MakeDefaultInfo only creates a default Info object
 func MakeDefaultInfo() *Info {
 	// build object
 	info := new(Info)
 
 	// set an empty root
-	info = info.parseTop("")
+	info = info.parseTop(DefaultTop)
 
 	// set the defult seperator
 	info.Seperator = DefaultSeperator
