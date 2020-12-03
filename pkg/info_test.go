@@ -4,35 +4,36 @@ import (
 	"testing"
 )
 
-func TestDefaultTopInfo(t *testing.T) {
+// TEST TOP
+func TestTopDefault(t *testing.T) {
 	info := NewInfo(DefaultTop)
 	shouldBeTop(info, t)
-	hasName(info, t)
+	hasNoName(info, t)
 	shouldNotHaveParent(info, t)
 }
 
-func TestTopInfo(t *testing.T) {
+func TestTop(t *testing.T) {
 	info := NewInfo("\\")
 	shouldBeTop(info, t)
 	hasNoName(info, t)
 	shouldNotHaveParent(info, t)
 }
 
-func TestInfoCustomSeperator(t *testing.T) {
+func TestTopCustomSeperator(t *testing.T) {
 	info := NewInfoCustomSeperator('/', "/")
 	shouldBeTop(info, t)
 	hasNoName(info, t)
 	shouldNotHaveParent(info, t)
 }
 
-func TestInfoCustomTop(t *testing.T) {
+func TestTopCustom(t *testing.T) {
 	info := NewInfoCustomTop("\\TOP", "\\TOP")
 	shouldBeTop(info, t)
 	hasName(info, t)
 	shouldNotHaveParent(info, t)
 }
 
-func TestInfoCustomTopWithSlash(t *testing.T) {
+func TestTopCustomWithSlash(t *testing.T) {
 	info := NewInfoCustomTop("\\TOP", "\\TOP\\")
 	shouldBeTop(info, t)
 	hasName(info, t)
@@ -66,6 +67,39 @@ func TestSecondChildInfoWithSlash(t *testing.T) {
 }
 func TestSecondChildInfo(t *testing.T) {
 	info := NewInfo("\\TOP\\Child\\NewChild")
+	shouldNotBeTop(info, t)
+	hasName(info, t)
+	shouldHaveParent(info, t)
+
+}
+
+/// TEST SEPERATORS
+
+func TestFirstChildCustomSeperator(t *testing.T) {
+
+	info := NewInfoCustomSeperator('/', "/TOP/Child")
+	shouldNotBeTop(info, t)
+	hasName(info, t)
+	shouldHaveParent(info, t)
+}
+
+func TestFirstChildCustomSeperatorExtra(t *testing.T) {
+	info := NewInfoCustomSeperator('/', "/TOP/Child/")
+	shouldNotBeTop(info, t)
+	hasName(info, t)
+	shouldHaveParent(info, t)
+
+}
+
+func TestSecondChildCustomSeperatorExtra(t *testing.T) {
+	info := NewInfoCustomSeperator('/', "/TOP/Child/NewChild/")
+	shouldNotBeTop(info, t)
+	hasName(info, t)
+	shouldHaveParent(info, t)
+
+}
+func TestSecondChildCustomSeperator(t *testing.T) {
+	info := NewInfoCustomSeperator('/', "/TOP/Child/NewChild")
 	shouldNotBeTop(info, t)
 	hasName(info, t)
 	shouldHaveParent(info, t)
