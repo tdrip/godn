@@ -1,6 +1,7 @@
 package path
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -64,7 +65,7 @@ func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
 	info.ParsedPath = info.parsePath(Path, info.Seperator, info.Top)
 
 	//build the name
-	info.Name = info.buildName()
+	info = info.buildName()
 
 	// Mark as Parse
 	info.Parsed = true
@@ -89,27 +90,24 @@ func MakeDefaultInfo() *Info {
 	return info
 }
 
-func (pathi *Info) buildName() string {
+func (pathi *Info) buildName() *Info {
 
 	if len(pathi.ParsedPath) > 0 {
-
 		r := []rune(pathi.ParsedPath)
 
 		pathi.Name = ""
 		pathi.Parent = nil
 
-		//ParentPath := ""
 		PTop := pathi.Top
-		//fmt.Println("Name: ", pathi.Name)
-		//fmt.Println("Parent: ", pathi.Parent)
+		fmt.Println("Name: ", pathi.Name)
+		fmt.Println("Parent: ", pathi.Parent)
 		foundfirstseperator := false
 
-		// fix later
 		ppath := strings.Replace(pathi.Parent.String(), string(pathi.Seperator), "", -1)
 		ptop := strings.Replace(PTop, string(pathi.Seperator), "", -1)
 
-		//fmt.Println("Parent Top: ", ptop)
-		//fmt.Println("Parent Path: ", ppath)
+		fmt.Println("Parent Top: ", ptop)
+		fmt.Println("Parent Path: ", ppath)
 
 		if strings.ToLower(ppath) == strings.ToLower(ptop) {
 			pathi.Name = ppath
@@ -124,8 +122,8 @@ func (pathi *Info) buildName() string {
 					pathi.Name = string(r[i+2 : len(r)])
 					pathi.Parent = NewInfoCustom(ptop, pathi.Seperator, string(r[0:i+1]))
 
-					//fmt.Println("i : %d ", i);
-					//fmt.Println("len : %d ",len(r));
+					fmt.Println("i : %d ", i)
+					fmt.Println("len : %d ", len(r))
 					break
 				}
 
@@ -135,18 +133,18 @@ func (pathi *Info) buildName() string {
 				}
 			}
 		}
-		//fmt.Println("Name: ", pathi.Name)
-		//fmt.Println("Parent: ", pathi.Parent)
+		fmt.Println("Name: ", pathi.Name)
+		fmt.Println("Parent: ", pathi.Parent)
 	}
 
-	return ""
+	return pathi
 }
 
 // clean the path
 func (pathi *Info) parsePath(Path string, Seperator byte, Top string) string {
 
-	//fmt.Println("Top: ", Top)
-	//fmt.Println("Path: ", Path)
+	fmt.Println("Top: ", Top)
+	fmt.Println("Path: ", Path)
 
 	if len(Path) > 0 {
 
@@ -166,13 +164,13 @@ func (pathi *Info) parsePath(Path string, Seperator byte, Top string) string {
 		// chop off the end seperator if it is provided
 		if strings.HasSuffix(Path, string(Seperator)) {
 			Path = Path[:(len(Path) - 1)]
-			//fmt.Println("Path  = Path[:(len(Path) - 1)]: ", Path)
+			fmt.Println("Path  = Path[:(len(Path) - 1)]: ", Path)
 		}
 
 		// make sure that the start has a slash
 		if len(Path) > 0 && Path[0] != Seperator {
 			Path = string(Seperator) + Path
-			//fmt.Println("Path = string(Seperator) + Path: ", Path)
+			fmt.Println("Path = string(Seperator) + Path: ", Path)
 		}
 
 		// Is the Path toped?
