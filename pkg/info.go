@@ -1,6 +1,7 @@
 package path
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -119,7 +120,10 @@ func (pathi *Info) buildName() *Info {
 
 					// the first
 					pathi.Name = string(r[i+2 : len(r)])
-					pathi.Parent = NewInfoCustom(ptop, pathi.Seperator, string(r[0:i+1]))
+					parent := string(r[0 : i+1])
+					fmt.Printf("parent : %s \n", parent)
+
+					pathi.Parent = NewInfoCustom(ptop, pathi.Seperator, parent)
 
 					//fmt.Printf("i : %d \n", i)
 					//fmt.Printf("len : %d \n", len(r))
