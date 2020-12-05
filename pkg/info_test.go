@@ -65,6 +65,7 @@ func TestSecondChildInfoWithSlash(t *testing.T) {
 	shouldHaveParent(info, t)
 
 }
+
 func TestSecondChildInfo(t *testing.T) {
 	info := NewInfo("\\TOP\\Child\\NewChild")
 	shouldNotBeTop(info, t)
