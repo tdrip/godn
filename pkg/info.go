@@ -103,8 +103,10 @@ func (pathi *Info) buildName() *Info {
 
 		foundfirstseperator := false
 
-		ppath := strings.Replace(pathi.ParsedPath, string(pathi.Seperator), "", -1)
-		ptop := strings.Replace(pathi.Top, string(pathi.Seperator), "", -1)
+		//ppath := strings.Replace(pathi.ParsedPath, string(pathi.Seperator), "", -1)
+		//ptop := strings.Replace(pathi.Top, string(pathi.Seperator), "", -1)
+		ppath := strings.TrimSuffix(pathi.ParsedPath, string(pathi.Seperator))
+		ptop := strings.TrimSuffix(pathi.Top, string(pathi.Seperator))
 
 		fmt.Println("Parent Top: ", ptop)
 		fmt.Println("Parent Path: ", ppath)
