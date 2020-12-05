@@ -106,8 +106,8 @@ func (pathi *Info) buildName() *Info {
 		ppath := strings.Replace(pathi.ParsedPath, string(pathi.Seperator), "", -1)
 		ptop := strings.Replace(pathi.Top, string(pathi.Seperator), "", -1)
 
-		//fmt.Println("Parent Top: ", ptop)
-		//fmt.Println("Parent Path: ", ppath)
+		fmt.Println("Parent Top: ", ptop)
+		fmt.Println("Parent Path: ", ppath)
 
 		if strings.ToLower(ppath) == strings.ToLower(ptop) {
 			pathi.Name = ppath
