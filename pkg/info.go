@@ -1,7 +1,6 @@
 package path
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -108,8 +107,8 @@ func (pathi *Info) buildName() *Info {
 		ppath := strings.TrimSuffix(pathi.ParsedPath, string(pathi.Seperator))
 		ptop := strings.TrimSuffix(pathi.Top, string(pathi.Seperator))
 
-		fmt.Println("Parent Top: ", ptop)
-		fmt.Println("Parent Path: ", ppath)
+		//fmt.Println("Parent Top: ", ptop)
+		//fmt.Println("Parent Path: ", ppath)
 
 		if strings.ToLower(ppath) == strings.ToLower(ptop) {
 			pathi.Name = ppath
@@ -123,7 +122,7 @@ func (pathi *Info) buildName() *Info {
 					// the first
 					pathi.Name = string(r[i+2 : len(r)])
 					parent := string(r[0 : i+1])
-					fmt.Printf("parent : %s \n", parent)
+					//fmt.Printf("parent : %s \n", parent)
 
 					pathi.Parent = NewInfoCustom(ptop, pathi.Seperator, parent)
 
