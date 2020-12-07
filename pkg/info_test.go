@@ -107,6 +107,46 @@ func TestSecondChildCustomSeperator(t *testing.T) {
 
 }
 
+func TestChildEqualsChild(t *testing.T) {
+
+	child := NewInfo("\\TOP\\Child\\")
+	child1 := NewInfo("\\TOP\\Child\\")
+
+	if !child.Equals(child1) {
+		t.Errorf("%s should equal %s", child.String(), child1.String())
+	}
+}
+
+func TestChildEqualsChildNoSlash(t *testing.T) {
+
+	child := NewInfo("\\TOP\\Child\\")
+	child1 := NewInfo("\\TOP\\Child")
+
+	if !child.Equals(child1) {
+		t.Errorf("%s should equal %s", child.String(), child1.String())
+	}
+}
+
+func TestChildEqualsChildString(t *testing.T) {
+
+	child := NewInfo("\\TOP\\Child\\")
+	child1 := "\\TOP\\Child\\"
+
+	if !child.StringEquals(child1) {
+		t.Errorf("%s should equal %s", child.String(), child1)
+	}
+}
+
+func TestChildEqualsChildStringNoEnding(t *testing.T) {
+
+	child := NewInfo("\\TOP\\Child\\")
+	child1 := "\\TOP\\Child"
+
+	if !child.StringEquals(child1) {
+		t.Errorf("%s should equal %s", child.String(), child1)
+	}
+}
+
 // common functions
 func shouldNotBeTop(info *Info, t *testing.T) {
 	if info.IsTop() {
