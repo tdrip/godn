@@ -2,6 +2,7 @@ package path
 
 import "fmt"
 
+//PrintDetails this prints the path info to fmt
 func PrintDetails(info *Info) {
 
 	if info == nil {

@@ -25,7 +25,7 @@ type Info struct {
 	// The Name
 	Name string
 
-	// Parent
+	// Parent Info
 	Parent *Info
 
 	//has it been parsed?
@@ -35,18 +35,22 @@ type Info struct {
 	Seperator byte
 }
 
+//NewInfo This creates a new path info, with defaults top and seperator
 func NewInfo(Path string) *Info {
 	return NewInfoCustom(DefaultTop, DefaultSeperator, strings.TrimSpace(Path))
 }
 
+//NewInfoCustomTop This creates path info with custom top but default seperator
 func NewInfoCustomTop(Top string, Path string) *Info {
 	return NewInfoCustom(Top, DefaultSeperator, strings.TrimSpace(Path))
 }
 
+//NewInfoCustomSeperator This creates path info with custom seperator
 func NewInfoCustomSeperator(Seperator byte, Path string) *Info {
 	return NewInfoCustom(string(Seperator)+"", Seperator, strings.TrimSpace(Path))
 }
 
+//NewInfoCustom This is a fully custom Info
 func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
 
 	info := MakeDefaultInfo()
@@ -279,6 +283,7 @@ func (pathi *Info) parseTop(top string) string {
 	return Top
 }
 
+//IsTop returns true if the info is the Top
 func (pathi *Info) IsTop() bool {
 	if pathi == nil {
 		return false
@@ -302,6 +307,7 @@ func (pathi *Info) IsTop() bool {
 
 }
 
+//IsValid this calls IsParsed?
 func (pathi *Info) IsValid() (bool, string) {
 
 	// has it been parsed?
@@ -309,6 +315,7 @@ func (pathi *Info) IsValid() (bool, string) {
 	return pathi.IsParsed()
 }
 
+//StringEquals case insensitive check to see if the path matches a stringinput
 func (pathi *Info) StringEquals(s string) bool {
 	if s != "" {
 		info := NewInfo(s)
@@ -317,6 +324,7 @@ func (pathi *Info) StringEquals(s string) bool {
 	return false
 }
 
+//Equals case insensitive check to see if the paths are the same
 func (pathi *Info) Equals(info *Info) bool {
 	if info != nil {
 		return strings.ToLower(pathi.String()) == strings.ToLower(info.String())
@@ -324,6 +332,7 @@ func (pathi *Info) Equals(info *Info) bool {
 	return false
 }
 
+//IsParsed Checks if the path is parsed and returns the string representation
 func (pathi *Info) IsParsed() (bool, string) {
 	if pathi == nil {
 		return false, ""
