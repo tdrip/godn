@@ -7,7 +7,7 @@ import (
 // DefaultSeperator is back slahes
 const DefaultSeperator = '\\'
 
-//DefaultTop is the top of the tree in this case it is empty
+// DefaultTop is the top of the tree in this case it is empty
 const DefaultTop = string(DefaultSeperator) + ""
 
 // Info represents an object's unique path on a platform
@@ -35,22 +35,22 @@ type Info struct {
 	Seperator byte
 }
 
-//NewInfo This creates a new path info, with defaults top and seperator
+// NewInfo This creates a new path info, with defaults top and seperator
 func NewInfo(Path string) *Info {
 	return NewInfoCustom(DefaultTop, DefaultSeperator, strings.TrimSpace(Path))
 }
 
-//NewInfoCustomTop This creates path info with custom top but default seperator
+// NewInfoCustomTop This creates path info with custom top but default seperator
 func NewInfoCustomTop(Top string, Path string) *Info {
 	return NewInfoCustom(Top, DefaultSeperator, strings.TrimSpace(Path))
 }
 
-//NewInfoCustomSeperator This creates path info with custom seperator
+// NewInfoCustomSeperator This creates path info with custom seperator
 func NewInfoCustomSeperator(Seperator byte, Path string) *Info {
 	return NewInfoCustom(string(Seperator)+"", Seperator, strings.TrimSpace(Path))
 }
 
-//NewInfoCustom This is a fully custom Info
+// NewInfoCustom This is a fully custom Info
 func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
 
 	info := MakeDefaultInfo()
@@ -76,7 +76,7 @@ func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
 	return info
 }
 
-//MakeDefaultInfo only creates a default Info object
+// MakeDefaultInfo only creates a default Info object
 func MakeDefaultInfo() *Info {
 	// build object
 	info := new(Info)
@@ -92,6 +92,10 @@ func MakeDefaultInfo() *Info {
 
 	return info
 }
+
+//
+// Private
+//
 
 func (pathi *Info) buildName() *Info {
 
@@ -114,7 +118,7 @@ func (pathi *Info) buildName() *Info {
 		//fmt.Println("Parent Top: ", ptop)
 		//fmt.Println("Parent Path: ", ppath)
 
-		if strings.ToLower(ppath) == strings.ToLower(ptop) {
+		if strings.EqualFold(ppath, ptop) {
 			pathi.Name = ppath
 			pathi.Parent = nil
 		} else {
@@ -124,7 +128,7 @@ func (pathi *Info) buildName() *Info {
 				if foundfirstseperator {
 
 					// the first
-					pathi.Name = string(r[i+2 : len(r)])
+					pathi.Name = string(r[i+2:])
 					parent := string(r[0 : i+1])
 					//fmt.Printf("parent : %s \n", parent)
 
@@ -208,7 +212,7 @@ func (pathi *Info) addTop(Path string, Seperator byte, Top string) string {
 	////fmt.Println("Top: ", ptop)
 	////fmt.Println("Path: ", pdn)
 
-	if strings.ToLower(pdn) == strings.ToLower(ptop) {
+	if strings.EqualFold(pdn, ptop) {
 		return Path
 	}
 
@@ -250,7 +254,7 @@ func (pathi *Info) addTop(Path string, Seperator byte, Top string) string {
 
 }
 
-///
+// /
 func (pathi *Info) parseTop(top string) string {
 
 	//fmt.Printf("ParseTop: %s \n", top)
@@ -283,7 +287,11 @@ func (pathi *Info) parseTop(top string) string {
 	return Top
 }
 
-//IsTop returns true if the info is the Top
+//
+// Public
+//
+
+// IsTop returns true if the info is the Top
 func (pathi *Info) IsTop() bool {
 	if pathi == nil {
 		return false
@@ -307,7 +315,7 @@ func (pathi *Info) IsTop() bool {
 
 }
 
-//IsValid this calls IsParsed?
+// IsValid this calls IsParsed?
 func (pathi *Info) IsValid() (bool, string) {
 
 	// has it been parsed?
@@ -315,7 +323,7 @@ func (pathi *Info) IsValid() (bool, string) {
 	return pathi.IsParsed()
 }
 
-//StringEquals case insensitive check to see if the path matches a stringinput
+// StringEquals case insensitive check to see if the path matches a stringinput
 func (pathi *Info) StringEquals(s string) bool {
 	if s != "" {
 		info := NewInfo(s)
@@ -324,15 +332,15 @@ func (pathi *Info) StringEquals(s string) bool {
 	return false
 }
 
-//Equals case insensitive check to see if the paths are the same
+// Equals case insensitive check to see if the paths are the same
 func (pathi *Info) Equals(info *Info) bool {
 	if info != nil {
-		return strings.ToLower(pathi.String()) == strings.ToLower(info.String())
+		return strings.EqualFold(pathi.String(), info.String())
 	}
 	return false
 }
 
-//IsParsed Checks if the path is parsed and returns the string representation
+// IsParsed Checks if the path is parsed and returns the string representation
 func (pathi *Info) IsParsed() (bool, string) {
 	if pathi == nil {
 		return false, ""
