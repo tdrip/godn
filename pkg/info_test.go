@@ -147,6 +147,16 @@ func TestChildEqualsChildStringNoEnding(t *testing.T) {
 	}
 }
 
+func TestNavigateUp(t *testing.T) {
+	child := NewInfoCustomSeperator('/', "/parent/child")
+	parent := child.Parent
+	pwd := NewInfoCustom("/", '/', parent.ParsedPath)
+
+	if !parent.Equals(pwd) {
+		t.Errorf("%s should equal %s", parent.String(), pwd)
+	}
+}
+
 // common functions
 func shouldNotBeTop(info *Info, t *testing.T) {
 	if info.IsTop() {

@@ -65,7 +65,8 @@ func NewInfoCustom(Top string, Seperator byte, Path string) *Info {
 	info.Top = info.parseTop(Top)
 
 	// Parse the Path
-	info = info.parsePath(Path, info.Seperator, info.Top)
+	parsedpath := parsePath(Path, info.Seperator, info.Top)
+	info.ParsedPath = parsedpath
 
 	//build the name
 	info = info.buildName()
@@ -128,6 +129,7 @@ func (pathi *Info) buildName() *Info {
 				if foundfirstseperator {
 
 					// the first
+					//pathi.Name = string(r[i+2 : len(r)])
 					pathi.Name = string(r[i+2:])
 					parent := string(r[0 : i+1])
 					//fmt.Printf("parent : %s \n", parent)
@@ -153,7 +155,7 @@ func (pathi *Info) buildName() *Info {
 }
 
 // clean the path
-func (pathi *Info) parsePath(Path string, Seperator byte, Top string) *Info {
+func parsePath(Path string, Seperator byte, Top string) string {
 
 	//fmt.Println("Top: ", Top)
 	//fmt.Println("Path: ", Path)
@@ -189,22 +191,20 @@ func (pathi *Info) parsePath(Path string, Seperator byte, Top string) *Info {
 
 		// Is the Path toped?
 		if !strings.HasPrefix(strings.ToLower(path), strings.ToLower(Top)) {
-			path = pathi.addTop(path, Seperator, Top)
+			path = addTop(path, Seperator, Top)
 		}
 
 		// fix double slashes being provided
 		// clean up if we were passed a Path with extra slashes (JSON)
-		pathi.ParsedPath = pathi.addTop(path, Seperator, Top)
+		return addTop(path, Seperator, Top)
 	} else {
-		pathi.ParsedPath = pathi.addTop(Path, Seperator, Top)
+		return addTop(Path, Seperator, Top)
 	}
 
 	//fmt.Printf("pathi.ParsedPath: %s \n", pathi.ParsedPath)
-
-	return pathi
 }
 
-func (pathi *Info) addTop(Path string, Seperator byte, Top string) string {
+func addTop(Path string, Seperator byte, Top string) string {
 
 	pdn := strings.Replace(Path, string(Seperator), "", -1)
 	ptop := strings.Replace(Top, string(Seperator), "", -1)
